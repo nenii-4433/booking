@@ -15,7 +15,8 @@ app.use(bodyParser.json());
 app.use(express.static('public'));
 
 // MongoDB Connection
-const mongoURI = process.env.MONGODB_URI || 'mongodb+srv://husitah13_db_user:bEXkxy2S4oYVL372@cluster0.mfbsk7e.mongodb.net/test?appName=Cluster0';
+let mongoURI = process.env.MONGODB_URI || 'mongodb+srv://husitah13_db_user:bEXkxy2S4oYVL372@cluster0.mfbsk7e.mongodb.net/test?appName=Cluster0';
+mongoURI = mongoURI.trim().replace(/^["']|["']$/g, ''); // Remove spaces and leading/trailing quotes
 
 let isConnected = false;
 const connectDB = async () => {
