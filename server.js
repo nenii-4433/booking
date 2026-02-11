@@ -4,7 +4,6 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const PDFDocument = require('pdfkit');
 const path = require('path');
-const Booking = require('./models/Booking');
 
 const app = express();
 const port = 3000;
@@ -14,10 +13,13 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
+// Import Booking model
+const Booking = require('./models/Booking');
+
 // MongoDB Connection
 let mongoURI = process.env.MONGODB_URI || 'mongodb+srv://husitah13_db_user:bEXkxy2S4oYVL372@cluster0.mfbsk7e.mongodb.net/test?appName=Cluster0';
 
-// Trim whitespace only (don't remove quotes - they're not in the URI string itself)
+// Trim whitespace only
 mongoURI = mongoURI.trim();
 
 // Diagnostic: Log URI stats (safe for production as it doesn't log the full string/password)
@@ -58,6 +60,15 @@ app.get('/health', (req, res) => res.json({ status: 'ok' }));
 app.post('/api/bookings', async (req, res) => {
   try {
     const { name, company, phone } = req.body;
+    
+    // Validate input
+    if (!name || !company || !phone) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Missing required fields' 
+      });
+    }
+
     const booking = new Booking({ name, company, phone });
     await booking.save();
     res.json({ success: true, id: booking._id });
@@ -107,7 +118,7 @@ app.get('/api/bookings/:id/pdf', async (req, res) => {
   }
 });
 
-// Get All Bookings (Public as requested)
+// Get All Bookings
 app.get('/api/admin/bookings', async (req, res) => {
     try {
         const bookings = await Booking.find().sort({ createdAt: -1 });
