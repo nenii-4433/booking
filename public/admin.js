@@ -1,4 +1,4 @@
-const API_BASE_URL = window.location.origin.includes(':3000') ? '' : 'http://localhost:3000';
+const API_BASE_URL = window.location.port === '5500' ? 'http://localhost:3000' : '';
 
 document.addEventListener('DOMContentLoaded', () => {
     const bookingsTableBody = document.getElementById('bookingsTableBody');
