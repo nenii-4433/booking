@@ -16,7 +16,12 @@ app.use(express.static('public'));
 
 // MongoDB Connection
 let mongoURI = process.env.MONGODB_URI || 'mongodb+srv://husitah13_db_user:bEXkxy2S4oYVL372@cluster0.mfbsk7e.mongodb.net/test?appName=Cluster0';
-mongoURI = mongoURI.trim().replace(/^["']|["']$/g, ''); // Remove spaces and leading/trailing quotes
+
+// Diagnostic: Log URI stats (safe for production as it doesn't log the full string/password)
+console.log(`URI Debug: Length=${mongoURI.length}, StartsWith=${mongoURI.substring(0, 10)}...`);
+
+// Aggressive Sanitization: Remove ALL quotes and leading/trailing whitespace
+mongoURI = mongoURI.replace(/["']/g, '').trim();
 
 let isConnected = false;
 const connectDB = async () => {
