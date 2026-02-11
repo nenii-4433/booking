@@ -17,21 +17,26 @@ app.use(express.static('public'));
 // MongoDB Connection
 let mongoURI = process.env.MONGODB_URI || 'mongodb+srv://husitah13_db_user:bEXkxy2S4oYVL372@cluster0.mfbsk7e.mongodb.net/test?appName=Cluster0';
 
+// Trim whitespace only (don't remove quotes - they're not in the URI string itself)
+mongoURI = mongoURI.trim();
+
 // Diagnostic: Log URI stats (safe for production as it doesn't log the full string/password)
 console.log(`URI Debug: Length=${mongoURI.length}, StartsWith=${mongoURI.substring(0, 10)}...`);
 
-// Aggressive Sanitization: Remove ALL quotes and leading/trailing whitespace
-mongoURI = mongoURI.replace(/["']/g, '').trim();
-
-let isConnected = false;
+let isConnected = null; // Store the connection promise
 const connectDB = async () => {
-  if (isConnected) return;
+  if (isConnected) return isConnected;
+  
+  console.log('Initiating MongoDB connection...');
+  isConnected = mongoose.connect(mongoURI);
+
   try {
-    await mongoose.connect(mongoURI);
-    isConnected = true;
-    console.log('Connected to MongoDB');
+    await isConnected;
+    console.log('Successfully connected to MongoDB');
+    return isConnected;
   } catch (err) {
     console.error('MongoDB connection error:', err);
+    isConnected = null; // Reset promise so next request can retry
     throw err;
   }
 };
@@ -57,8 +62,17 @@ app.post('/api/bookings', async (req, res) => {
     await booking.save();
     res.json({ success: true, id: booking._id });
   } catch (error) {
-    console.error('Booking save error:', error);
-    res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+    console.error('Booking save error details:', {
+      error: error,
+      stack: error.stack,
+      body: req.body
+    });
+    res.status(500).json({ 
+      success: false, 
+      message: 'Server Error during booking save', 
+      error: error.message,
+      stack: process.env.NODE_ENV === 'production' ? undefined : error.stack
+    });
   }
 });
 
