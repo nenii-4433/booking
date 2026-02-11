@@ -16,9 +16,29 @@ app.use(express.static('public'));
 
 // MongoDB Connection
 const mongoURI = process.env.MONGODB_URI || 'mongodb+srv://husitah13_db_user:bEXkxy2S4oYVL372@cluster0.mfbsk7e.mongodb.net/test?appName=Cluster0';
-mongoose.connect(mongoURI)
-  .then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.error('MongoDB connection error:', err));
+
+let isConnected = false;
+const connectDB = async () => {
+  if (isConnected) return;
+  try {
+    await mongoose.connect(mongoURI);
+    isConnected = true;
+    console.log('Connected to MongoDB');
+  } catch (err) {
+    console.error('MongoDB connection error:', err);
+    throw err;
+  }
+};
+
+// Middleware to ensure DB is connected
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Database connection failed', error: err.message });
+  }
+});
 
 // Routes
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
