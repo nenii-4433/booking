@@ -10,7 +10,11 @@ Follow these steps to get your booking app live on Vercel:
 1. Go to [vercel.com](https://vercel.com) and sign in.
 2. Click **Add New** -> **Project**.
 3. Import your GitHub repository.
-4. **Important**: In the "Environment Variables" section, add a new variable:
+4. **Project Settings**:
+   - **Framework Preset**: Select **"Other"**.
+   - **Build Command**: Leave **Empty** (Default).
+   - **Output Directory**: Leave **Empty** (Default).
+5. **Important**: In the "Environment Variables" section, add a new variable:
    - **Key**: `MONGODB_URI`
    - **Value**: `mongodb+srv://husitah13_db_user:bEXkxy2S4oYVL372@cluster0.mfbsk7e.mongodb.net/test?appName=Cluster0`
 5. Click **Deploy**.
