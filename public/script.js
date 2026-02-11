@@ -28,11 +28,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 form.classList.add('hidden');
                 successMessage.classList.remove('hidden');
             } else {
-                alert('Booking failed. Please try again.');
+                alert(`Booking failed: ${result.message || 'Unknown error'}`);
             }
         } catch (error) {
-            console.error('Error:', error);
-            alert('An error occurred. Please try again later.');
+            console.error('Submission error:', error);
+            alert(`An error occurred: ${error.message}. Please check your connection.`);
         }
     });
 

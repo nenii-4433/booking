@@ -31,8 +31,8 @@ app.post('/api/bookings', async (req, res) => {
     await booking.save();
     res.json({ success: true, id: booking._id });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: 'Server Error' });
+    console.error('Booking save error:', error);
+    res.status(500).json({ success: false, message: 'Server Error', error: error.message });
   }
 });
 
