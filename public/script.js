@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 form.classList.add('hidden');
                 successMessage.classList.remove('hidden');
             } else {
-                alert(`Booking failed: ${result.message || 'Unknown error'}`);
+                alert(`Booking failed: ${result.message || 'Unknown error'}. Detail: ${result.error || 'Check server logs'}`);
             }
         } catch (error) {
             console.error('Submission error:', error);
